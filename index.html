@@ -23,8 +23,12 @@
         <body ng-controller="FacesController">
           <h1>The Face</h1>
           <canvas id="faceCanvas" width="200" height="200"></canvas>
-          <img width="300" height="300" id="targetImage" /><br />
-          <a ng-click="createNewFace();">Make a Face</a>
+          <ul id="facesList">
+            <li ng-repeat="face in faces">
+                <img width="200" height="200" src="{{face}}" />
+            </li>
+          </ul>
+
         </body >
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>

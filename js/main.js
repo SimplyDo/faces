@@ -2,8 +2,8 @@ function FacesController($scope) {
   
   var c=document.getElementById("faceCanvas");
   var ctx=c.getContext("2d");
-  var CanvasWidth = 600;
-  var CanvasHeight = 600;
+  var CanvasWidth = 400;
+  var CanvasHeight = 400;
   var headHeight = CanvasHeight / 100 * 65; //percentage go canvase used for head
   var headCenterY =  headHeight/2 + (CanvasHeight-headHeight) / 2;
 
@@ -73,6 +73,10 @@ function FacesController($scope) {
 
 
 
+
+
+
+
   $scope.fillCanvas = function() {
 
     var color = backgroundColors[Math.floor(Math.random()*backgroundColors.length)];
@@ -85,8 +89,8 @@ function FacesController($scope) {
   }
 
 
-  $scope.convertCanvasToImage = function(image) {
-    image.src = c.toDataURL("image/png");
+  $scope.convertCanvasToImage = function() {
+    return c.toDataURL("image/png");
   }
 
   
@@ -309,12 +313,21 @@ function FacesController($scope) {
 
     $scope.drawMouth(Math.random()*100,Math.random()*100,Math.random()*100,Math.random()*100);
 
-    $scope.convertCanvasToImage(document.getElementById("targetImage"));
-
   }
-     
 
-$scope.createNewFace();
+
+
+
+
+  //Collection
+  $scope.faces = [];
+
+  for (var i = 0; i < 30; i++ ) {
+
+    $scope.createNewFace();
+    $scope.faces[i] = $scope.convertCanvasToImage();
+    
+  }
 
 
 }
