@@ -1,10 +1,14 @@
 function FacesController($scope) {
+
+  $scope.faces = [];
+
+  $scope.facesCount = 0;
   
   var c=document.getElementById("faceCanvas");
   var ctx=c.getContext("2d");
-  var CanvasWidth = 400;
-  var CanvasHeight = 400;
-  var headHeight = CanvasHeight / 100 * 65; //percentage go canvase used for head
+  var CanvasWidth = 600;
+  var CanvasHeight = 600;
+  var headHeight = CanvasHeight / 100 * 75; //percentage go canvase used for head
   var headCenterY =  headHeight/2 + (CanvasHeight-headHeight) / 2;
 
   // Set canvas dimensions
@@ -18,33 +22,32 @@ function FacesController($scope) {
   // Most values are a percentage based on the Head's total height
 
   // Line Width
-  var faceOutlineWidth = headHeight / 40;
-  var noseLineWidth = headHeight / 65;
-  var mouthLineWidth = headHeight / 40;
-  var eyeBrowLineWidth = headHeight / 40;
-
+  var faceOutlineWidth = headHeight / 25;
+  var noseLineWidth = headHeight / 55;
+  var mouthLineWidth = headHeight / 30;
+  var eyeBrowLineWidth = headHeight / 35;
 
   // min and max values in percent of total head height
   var headWidthRange = [65,95];
 
   // Eyes
   var eyePositionRange = [30,50];
-  var eyeDistaneRange = [25,36];
+  var eyeDistaneRange = [15,36];
   var eyeSizeRange = [1,4];
 
   // Eyebrows
   var eyeBrowsangleRange = [-10,10]; // Smiley or Frowney?
-  var eyeBrowsWidthRange = [10,25];
-  var eyeBrowsGapRange = [1,25];
-  var eyeBrowsStrengthRange = [0.5,2];
+  var eyeBrowsWidthRange = [12,25];
+  var eyeBrowsGapRange = [1,20];
+  var eyeBrowsStrengthRange = [0.7,3];
   var eyeBrowsOffsetRange = [-3,-15]; // Above Eye, relative to eyebrow length
 
   // Nose
-  var nosePositionRange = [53,70];
+  var nosePositionRange = [53,67];
   var noseWidthRange = [3,20];
 
   // Mouth
-  var mouthPositionRange = [73,90];
+  var mouthPositionRange = [70,88];
   var mouthWidthRange = [8,30];
   var mouthLowerWidthRange = [0.2,0.6]; // relative to the mouth width
   var mouthAngleRange = [-5,5];
@@ -60,8 +63,20 @@ function FacesController($scope) {
     '#9E8C89',
     '#BD657B',
     '#027ABB',
-    '#EC9439',
     '#7F1416'
+  ]
+
+
+  //Skin Tones
+  var skinColors = [
+    '#fae3ca',
+    '#fae3ca',
+    '#fae3ca',
+    '#fae3ca',
+    '#ac8a62',
+    '#d2c0aa',
+    '#854f39',
+    '#faf8ca'
   ]
 
 
@@ -79,12 +94,15 @@ function FacesController($scope) {
 
   $scope.fillCanvas = function() {
 
-    var color = backgroundColors[Math.floor(Math.random()*backgroundColors.length)];
     // set background colour
-    ctx.fillStyle=color;
+    ctx.fillStyle=backgroundColors[Math.floor(Math.random()*backgroundColors.length)];
 
     // fill entire canvas
     ctx.fillRect(0,0,CanvasWidth,CanvasHeight);
+
+    ctx.fillStyle='rgba(255,255,255,0.4)';
+    ctx.font = "bold "+ CanvasWidth/25 +"px sans-serif";  
+    ctx.fillText("SimplyDo.com", CanvasWidth/20, CanvasHeight-CanvasHeight/20);
 
   }
 
@@ -100,12 +118,6 @@ function FacesController($scope) {
 
     // calculating face wideness based on wideness paramter and preset headWidthRange
     var headWidth = $scope.rangeValue(true, headWidthRange, wideness);
-
-    // Create gradient top to bottom
-    var grd=ctx.createLinearGradient(0,0,0,500);
-    grd.addColorStop(0,topColor);
-    grd.addColorStop(1,bottomColor);
-
 
     //draw a circle
     ctx.beginPath();
@@ -125,7 +137,7 @@ function FacesController($scope) {
     ctx.closePath();
 
     // Fill with gradient
-    ctx.fillStyle=grd;
+    ctx.fillStyle=skinColors[Math.floor(Math.random()*skinColors.length)];
     ctx.fill();
 
 
@@ -133,34 +145,6 @@ function FacesController($scope) {
     ctx.lineWidth=faceOutlineWidth;
     ctx.strokeStyle='black';
     ctx.stroke();
-
-
-
-    //draw a circle
-    ctx.beginPath();
-
-    for (var i = 0 * Math.PI; i < 2 * Math.PI; i += 0.01 ) {
-      xPos = CanvasWidth/2*0.98 - ((headWidth*0.94)/2 * Math.cos(i)) * Math.cos(0 * Math.PI);
-      yPos = headCenterY*0.98 + ((headHeight*0.94)/2 * Math.sin(i)) * Math.cos(0 * Math.PI);
-
-      if (i == 0) {
-          ctx.moveTo(xPos, yPos);
-      } else {
-          ctx.lineTo(xPos, yPos);
-      }
-    }
-
-    //ctx.arc(CanvasWidth/2, CanvasHeight/2, 200, 0, Math.PI*2, true); 
-    ctx.closePath();
-
-    // Fill with gradient
-    ctx.fillStyle='rgba(255,255,255,0.2)';
-    ctx.fill();
-
-
-
-
-
 
   }
 
@@ -313,21 +297,27 @@ function FacesController($scope) {
 
     $scope.drawMouth(Math.random()*100,Math.random()*100,Math.random()*100,Math.random()*100);
 
+    $scope.facesCount++;
+
   }
 
 
 
 
 
-  //Collection
-  $scope.faces = [];
 
-  for (var i = 0; i < 30; i++ ) {
+  $scope.setUpTiles = function(number) {
 
-    $scope.createNewFace();
-    $scope.faces[i] = $scope.convertCanvasToImage();
-    
+    for (var i = 0; i < number; i++ ) {
+
+      $scope.createNewFace();
+      $scope.faces[i] = {'src':$scope.convertCanvasToImage()};
+      
+    }
+
   }
+
+  $scope.setUpTiles(3);
 
 
 }
