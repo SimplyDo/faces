@@ -4,16 +4,36 @@ function FacesController($scope) {
 
   $scope.facesCount = 0;
   
-  var c=document.getElementById("faceCanvas");
+  var c = document.createElement("canvas");
   var ctx=c.getContext("2d");
   var CanvasWidth = 600;
   var CanvasHeight = 600;
-  var headHeight = CanvasHeight / 100 * 75; //percentage go canvase used for head
-  var headCenterY =  headHeight/2 + (CanvasHeight-headHeight) / 2;
 
   // Set canvas dimensions
   c.width = CanvasWidth;
   c.height = CanvasHeight;
+
+
+  var headHeight = CanvasHeight / 100 * 75; //percentage go canvase used for head
+  var headCenterY =  headHeight/2 + (CanvasHeight-headHeight) / 2;
+
+  
+
+  
+
+  //center row of faces vertically
+  var windowWidth = $(window).width();
+  var windowHeight = $(window).height();
+
+  if (windowHeight > 530) {
+    $("#facesList").css("margin-top",(windowHeight-530)/2+"px");
+  }
+
+  // determine number of faces to show based on window with
+  var facesCount = Math.floor(windowWidth / 350);
+
+
+
 
 
 
@@ -317,7 +337,7 @@ function FacesController($scope) {
 
   }
 
-  $scope.setUpTiles(3);
+  $scope.setUpTiles(facesCount);
 
 
 }

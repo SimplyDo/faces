@@ -22,7 +22,6 @@
 
     <body ng-controller="FacesController">
       
-      <canvas id="faceCanvas" width="200" height="200"></canvas>
       <ul id="facesList">
         <li ng-repeat="face in faces">
             <a ng-click="createNewFace(); face.src = convertCanvasToImage()" >
