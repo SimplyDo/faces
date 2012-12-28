@@ -1,30 +1,26 @@
 function FacesController($scope) {
 
-  $scope.faces = [];
 
+
+  // ---------------- Environment Values and Settings --------------------------
+
+  $scope.faces = [];
   $scope.facesCount = 0;
   
   var c = document.createElement("canvas");
   var ctx=c.getContext("2d");
   var CanvasWidth = 600;
   var CanvasHeight = 600;
+  var headHeight = CanvasHeight / 100 * 75; //percentage go canvase used for head
+  var headCenterY =  headHeight/2 + (CanvasHeight-headHeight) / 2;
+  var windowWidth = $(window).width();
+  var windowHeight = $(window).height();
 
   // Set canvas dimensions
   c.width = CanvasWidth;
   c.height = CanvasHeight;
 
-
-  var headHeight = CanvasHeight / 100 * 75; //percentage go canvase used for head
-  var headCenterY =  headHeight/2 + (CanvasHeight-headHeight) / 2;
-
-  
-
-  
-
-  //center row of faces vertically
-  var windowWidth = $(window).width();
-  var windowHeight = $(window).height();
-
+  //center row of faces vertically on larger screens
   if (windowHeight > 530) {
     $("#facesList").css("margin-top",(windowHeight-530)/2+"px");
   }
@@ -34,20 +30,16 @@ function FacesController($scope) {
 
 
 
+  // ---------------- Faces Parameters --------------------------
+  // Most values are a percentage based on the headHeight
 
-
-
-
-  // Variables
-  // Most values are a percentage based on the Head's total height
-
-  // Line Width
+  // Lines Width
   var faceOutlineWidth = headHeight / 25;
   var noseLineWidth = headHeight / 55;
   var mouthLineWidth = headHeight / 30;
   var eyeBrowLineWidth = headHeight / 35;
 
-  // min and max values in percent of total head height
+  // Head Shape
   var headWidthRange = [65,95];
 
   // Eyes
@@ -55,7 +47,7 @@ function FacesController($scope) {
   var eyeDistaneRange = [15,36];
   var eyeSizeRange = [1,4];
 
-  // Eyebrows
+  // Eye Brows
   var eyeBrowsangleRange = [-10,10]; // Smiley or Frowney?
   var eyeBrowsWidthRange = [12,25];
   var eyeBrowsGapRange = [1,20];
@@ -72,7 +64,7 @@ function FacesController($scope) {
   var mouthLowerWidthRange = [0.2,0.6]; // relative to the mouth width
   var mouthAngleRange = [-5,5];
 
-  //Background
+  // Background Color
   var backgroundColors = [
     '#490A3D',
     '#BD1550',
@@ -86,8 +78,7 @@ function FacesController($scope) {
     '#7F1416'
   ]
 
-
-  //Skin Tones
+  // Skin Tones
   var skinColors = [
     '#fae3ca',
     '#fae3ca',
@@ -99,20 +90,58 @@ function FacesController($scope) {
     '#faf8ca'
   ]
 
+  // Watermark
+  var watermark = "SimplyDo.com";
 
 
 
+  // --------------------- Helper Functions ----------------------------
+
+  $scope.convertCanvasToImage = function() {
+    return c.toDataURL("image/png");
+  }
+
+  $scope.rangeValue = function(base, range, percentage) {
+
+    // returns a value from a range between min and max based on a percentage
+    if (base == true) {
+      return headHeight / 100 * ((range[1]-range[0]) / 100 * percentage + range[0]);
+    } else {
+      return (range[1]-range[0]) / 100 * percentage + range[0];
+    }
+
+  }
+
+  $scope.setUpTiles = function(number) {
+
+    for (var i = 0; i < number; i++ ) {
+
+      $scope.createNewFace();
+      $scope.faces[i] = {'src':$scope.convertCanvasToImage()};
+      
+    }
+
+  }
 
 
 
+  // --------------------- Drawing Functions ----------------------------
 
+  $scope.createNewFace = function() {
 
+    // reset the canvas and render each element
+    $scope.resetCanvas();
+    $scope.drawHead(Math.random()*100,'#FFEEDD','#FFDDBB');
+    $scope.drawEyes(Math.random()*100,Math.random()*100,Math.random()*100);
+    $scope.drawNose(Math.random()*100,Math.random()*100);
+    $scope.drawMouth(Math.random()*100,Math.random()*100,Math.random()*100,Math.random()*100);
 
+    // increase the count of faces created
+    $scope.facesCount++;
 
+  }
 
-
-
-  $scope.fillCanvas = function() {
+  $scope.resetCanvas = function() {
 
     // set background colour
     ctx.fillStyle=backgroundColors[Math.floor(Math.random()*backgroundColors.length)];
@@ -120,19 +149,12 @@ function FacesController($scope) {
     // fill entire canvas
     ctx.fillRect(0,0,CanvasWidth,CanvasHeight);
 
+    // add water mark
     ctx.fillStyle='rgba(255,255,255,0.4)';
     ctx.font = "bold "+ CanvasWidth/25 +"px sans-serif";  
-    ctx.fillText("SimplyDo.com", CanvasWidth/20, CanvasHeight-CanvasHeight/20);
+    ctx.fillText(watermark, CanvasWidth/20, CanvasHeight-CanvasHeight/20);
 
   }
-
-
-  $scope.convertCanvasToImage = function() {
-    return c.toDataURL("image/png");
-  }
-
-  
-
 
   $scope.drawHead = function(wideness,topColor,bottomColor) {
 
@@ -153,13 +175,11 @@ function FacesController($scope) {
       }
     }
 
-    //ctx.arc(CanvasWidth/2, CanvasHeight/2, 200, 0, Math.PI*2, true); 
     ctx.closePath();
 
-    // Fill with gradient
+    // Fill with random skin colour
     ctx.fillStyle=skinColors[Math.floor(Math.random()*skinColors.length)];
     ctx.fill();
-
 
     // Draw the outline
     ctx.lineWidth=faceOutlineWidth;
@@ -167,8 +187,6 @@ function FacesController($scope) {
     ctx.stroke();
 
   }
-
-
 
   $scope.drawEyeBrows = function(eyePosition, gap, offSet, width, strength, angle) {
 
@@ -187,29 +205,12 @@ function FacesController($scope) {
     ctx.lineTo(CanvasWidth/2+eyeBrowGap/2, eyeBrowPosition);
     ctx.closePath();
 
-    // Draw the outline
+    // Draw the brows
     ctx.lineWidth=eyeBrowLineWidth*eyeBrowStrength;
     ctx.strokeStyle='black';
     ctx.stroke();
     
-  } 
-
-
-  $scope.rangeValue = function(base, range, percentage) {
-
-    // returns a value from a range between min and max based on a percentage
-    if (base == true) {
-      return headHeight / 100 * ((range[1]-range[0]) / 100 * percentage + range[0]);
-    } else {
-      return (range[1]-range[0]) / 100 * percentage + range[0];
-    }
-
   }
-
-
-
-
-
 
   $scope.drawEyes = function(position, distance, size) {
 
@@ -218,13 +219,7 @@ function FacesController($scope) {
     var eyeDistance = $scope.rangeValue(true, eyeDistaneRange, distance);
     var eyePosition = $scope.rangeValue(true, eyePositionRange, position) + (CanvasHeight - headHeight) / 2;
 
-
-
-
-    //draw a circle
     ctx.beginPath();
-
-
     ctx.arc(CanvasWidth/2-eyeDistance/2, eyePosition, eyeSize, 0, Math.PI*2, true); 
     ctx.arc(CanvasWidth/2+eyeDistance/2, eyePosition, eyeSize, 0, Math.PI*2, true); 
     ctx.closePath();
@@ -233,42 +228,29 @@ function FacesController($scope) {
     ctx.fillStyle='black';
     ctx.fill();
 
-
+    // draw eye brows (require position of eyes)
     $scope.drawEyeBrows(eyePosition,Math.random()*100,Math.random()*100,Math.random()*100,Math.random()*100,Math.random()*100);
 
   }
 
-
-
-
   $scope.drawNose = function(position, width) {
-
 
     //calculating values for drawing
     var noseWidth = $scope.rangeValue(true, noseWidthRange, width);
     var nosePosition = $scope.rangeValue(true, nosePositionRange, position) + (CanvasHeight - headHeight) / 2;
 
-
-
-
-    //draw a circle
     ctx.beginPath();
-
-
     ctx.moveTo(CanvasWidth/2-noseWidth/2, nosePosition);
     ctx.lineTo(CanvasWidth/2+noseWidth/2, nosePosition);
     ctx.closePath();
 
-    // Draw the outline
+    // Draw the nose
     ctx.strokeStyle='rgba(0,0,0,0.5)';
     ctx.lineWidth=noseLineWidth;
     ctx.stroke();
-  }  
-
-
+  }
 
   $scope.drawMouth = function(position, width, lowerWidth, angle) {
-
 
     //calculating values for drawing
     var mouthAngle = $scope.rangeValue(false, mouthAngleRange, angle);
@@ -277,67 +259,32 @@ function FacesController($scope) {
     var mouthLowerWidth = $scope.rangeValue(false, mouthLowerWidthRange, lowerWidth);
 
 
-
-
-
-    //draw a circle
+    // Upper lip
     ctx.beginPath();
     ctx.moveTo(CanvasWidth/2-mouthWidth/2, mouthPosition-mouthWidth/100*mouthAngle);
     ctx.lineTo(CanvasWidth/2+mouthWidth/2, mouthPosition);
     ctx.closePath();
 
-    // Draw the outline
     ctx.lineWidth=mouthLineWidth;
     ctx.strokeStyle='red';
     ctx.stroke();
 
+    // lower lip
     ctx.beginPath();
     ctx.moveTo(CanvasWidth/2-(mouthWidth/2 * mouthLowerWidth), mouthPosition+mouthLineWidth*2-mouthLowerWidth/100*mouthAngle);
     ctx.lineTo(CanvasWidth/2+(mouthWidth/2 * mouthLowerWidth), mouthPosition+mouthLineWidth*2);
     ctx.closePath();
 
-    // Draw the outline
     ctx.lineWidth=mouthLineWidth;
     ctx.strokeStyle='rgba(0,0,0,0.2)';
     ctx.stroke();
-
     
-  }  
-
-
-  $scope.createNewFace = function() {
-
-    $scope.fillCanvas();
-
-    $scope.drawHead(Math.random()*100,'#FFEEDD','#FFDDBB');
-
-    $scope.drawEyes(Math.random()*100,Math.random()*100,Math.random()*100);
-
-    $scope.drawNose(Math.random()*100,Math.random()*100);
-
-    $scope.drawMouth(Math.random()*100,Math.random()*100,Math.random()*100,Math.random()*100);
-
-    $scope.facesCount++;
-
   }
 
 
 
-
-
-
-  $scope.setUpTiles = function(number) {
-
-    for (var i = 0; i < number; i++ ) {
-
-      $scope.createNewFace();
-      $scope.faces[i] = {'src':$scope.convertCanvasToImage()};
-      
-    }
-
-  }
+  // --------------------- Init ----------------------------
 
   $scope.setUpTiles(facesCount);
-
 
 }
