@@ -27,7 +27,14 @@
             </a>
         </li>
       </ul>
-      <h1>{{facesCount}} Faces</h1>
+      <h1>
+        <ng-pluralize count="facesCount"
+              when="{'0': 'No Face',
+                     '1': 'One Face',
+                     '2': 'Two Faces',
+                     'other': '{} Faces'}">
+        </ng-pluralize>
+      </h1>
       <p>Click the faces for more faces.<br />Created by <a href="http://simplydo.com">Simply Do</a><p>
 
     </body >
