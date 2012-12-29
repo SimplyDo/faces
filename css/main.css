@@ -34,10 +34,6 @@ canvas {
   margin-top:0px;
 }
 
-img {
-  height:25%;
-}
-
 #facesList li {
   display:inline-block;
   margin:20px;
