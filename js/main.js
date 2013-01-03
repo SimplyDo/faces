@@ -1,9 +1,29 @@
 function FacesController($scope) {
 
-  // ---------------- Environment Values and Settings --------------------------
 
-  $scope.faces = [];
-  $scope.facesCount = 0;
+  $scope.totalFaces = 0;
+  
+
+
+  // ----------------Init QS SDK -----------------------------------------------
+  var qs = false;
+  QS.setup().then(function (initializedQs) {
+    qs = initializedQs;
+    qs.retrievePlayerInfo().then(function (player) {
+      $scope.playerName = player.name;
+      $scope.$apply();
+    });
+    qs.retrievePlayerData().then(function (data) {
+      if (data.totalFaces) {
+        $scope.totalFaces = data.totalFaces;
+      }
+      $scope.$apply();
+    });
+  })
+
+
+
+  // ---------------- Environment Values and Settings --------------------------
   
   var c = document.createElement("canvas");
   var ctx=c.getContext("2d");
@@ -112,6 +132,8 @@ function FacesController($scope) {
 
   $scope.setUpTiles = function(number) {
 
+    $scope.faces = [];
+
     for (var i = 0; i < number; i++ ) {
 
       $scope.createNewFace();
@@ -135,7 +157,10 @@ function FacesController($scope) {
     $scope.drawMouth(Math.random()*100,Math.random()*100,Math.random()*100,Math.random()*100);
 
     // increase the count of faces created
-    $scope.facesCount++;
+    $scope.totalFaces++;
+    if (qs != false) {
+      qs.setPlayerData('totalFaces', $scope.totalFaces);
+    }
 
   }
 
@@ -282,10 +307,6 @@ function FacesController($scope) {
 
 
   // --------------------- Init ----------------------------
-  QS.setup().then(function (qs) {
-      alert("QS SDK loaded.");
-  })
-
 
   $scope.setUpTiles(facesCount);
 

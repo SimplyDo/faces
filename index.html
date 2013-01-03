@@ -27,12 +27,14 @@
             </a>
         </li>
       </ul>
-      <h1>
-        <ng-pluralize count="facesCount"
-              when="{'0': 'No Face',
-                     '1': 'One Face',
-                     '2': 'Two Faces',
-                     'other': '{} Faces'}">
+      <h1 >
+        <span ng-show="playerName">{{playerName}} has seen</span>
+        <span ng-hide="playerName">You have seen</span>
+        <ng-pluralize count="totalFaces"
+              when="{'0': 'nothing',
+                     '1': 'one face',
+                     '2': 'two faces',
+                     'other': '{} faces'}">
         </ng-pluralize>
       </h1>
       <p>Click the faces for more faces.<br />Created by <a href="http://simplydo.com">Simply Do</a><p>
