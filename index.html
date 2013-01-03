@@ -23,7 +23,7 @@
       <ul id="facesList">
         <li ng-repeat="face in faces">
             <a ng-click="createNewFace(); face.src = convertCanvasToImage()" >
-              <img width="300" height="300" src="{{face.src}}" />
+              <img width="300" height="300" ng-src="{{face.src}}" />
             </a>
         </li>
       </ul>
@@ -39,11 +39,15 @@
 
     </body >
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script>
       window.jQuery || document.write('<script src="js/vendor/jquery-1.8.3.min.js"><\/script>')
     </script>
+
+    <script src="http://localhost:8192/javascripts/sdk.js" ></script>
+
     <script src="js/main.js"></script>
+
 
     <script>
       var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];

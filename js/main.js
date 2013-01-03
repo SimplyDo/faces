@@ -1,7 +1,5 @@
 function FacesController($scope) {
 
-
-
   // ---------------- Environment Values and Settings --------------------------
 
   $scope.faces = [];
@@ -284,7 +282,14 @@ function FacesController($scope) {
 
 
   // --------------------- Init ----------------------------
+  QS.setup().then(function (qs) {
+      alert("QS SDK loaded.");
+  })
+
 
   $scope.setUpTiles(facesCount);
+
+
+
 
 }
