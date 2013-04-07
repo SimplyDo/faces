@@ -10,8 +10,8 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" type="text/css" href="css/main.css" />
-    <script src="https://sdk-app.herokuapp.com/javascripts/sdk.js" ></script>
     <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    <script src="https://sdk-app.herokuapp.com/javascripts/sdk.js" ></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.min.js"></script>
   </head>
   <body>
@@ -21,7 +21,7 @@
 
     <body ng-controller="FacesController">
       
-      <ul id="facesList">
+      <ul id="facesList" ng-init="initQS();">
         <li ng-repeat="face in faces">
             <a ng-click="createNewFace(); face.src = convertCanvasToImage()" >
               <img width="300" height="300" ng-src="{{face.src}}" />

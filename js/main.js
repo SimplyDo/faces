@@ -7,19 +7,24 @@ function FacesController($scope) {
 
   // ----------------Init QS SDK -----------------------------------------------
   var qs = false;
-  QS.setup().then(function (initializedQs) {
-    qs = initializedQs;
-    qs.retrievePlayerInfo().then(function (player) {
-      $scope.playerName = player.name;
-      $scope.$apply();
-    });
-    qs.retrievePlayerData().then(function (data) {
-      if (data.totalFaces) {
-        $scope.totalFaces = data.totalFaces;
-      }
-      $scope.$apply();
-    });
-  })
+
+
+  $scope.initQS = function() {
+    QS.setup().then(function (initializedQs) {
+      qs = initializedQs;
+      qs.retrievePlayerInfo().then(function (player) {
+        $scope.playerName = player.name;
+        $scope.$apply();
+      });
+      qs.retrievePlayerData().then(function (data) {
+        if (data.totalFaces) {
+          $scope.totalFaces = data.totalFaces;
+        }
+        $scope.$apply();
+      });
+    })
+  
+  }
 
 
 
